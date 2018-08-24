@@ -1,6 +1,6 @@
 var settings = {
     mqtt: {
-        host: process.env.MQTT_HOST || '',
+        host: process.env.MQTT_HOST || 'mqtt://localhost:1883',
         user: process.env.MQTT_USER || '',
         password: process.env.MQTT_PASS || '',
         clientId: process.env.MQTT_CLIENT_ID || null
@@ -18,6 +18,13 @@ var mqtt = require('mqtt');
 var express = require('express');
 var bodyParser = require('body-parser');
 var multer = require('multer');
+var aedes = require('aedes')()
+var broker = require('net').createServer(aedes.handle)
+var broker_port = 1883
+
+broker.listen(broker_port, function () {
+    console.log('Aedes MQTT broker listening on port', broker_port)
+  })
 
 var app = express();
 
@@ -145,5 +152,5 @@ app.get('/subscribe/', logRequest, authorizeUser, function (req, res) {
 });
 
 app.listen(app.get('port'), function () {
-    console.log('Node app is running on port', app.get('port'));
+    console.log('Bridge is running on port', app.get('port'));
 });
